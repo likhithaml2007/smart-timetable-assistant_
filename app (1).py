@@ -15,11 +15,20 @@ date = st.date_input("Select Date")
 # Add event
 if st.button("Add Event"):
     if event:
-        st.session_state.events.append((event, str(date)))
-        st.success("Event added successfully!")
+        conflict = False
+        
+        for e in st.session_state.events:
+            if e[1] == str(date) and e[2] == str(time):
+                conflict = True
+                break
+
+        if conflict:
+            st.error("⚠️ Time conflict! Another event already exists at this time.")
+        else:
+            st.session_state.events.append((event, str(date), str(time), category))
+            st.success("Event added successfully!")
     else:
         st.warning("Please enter event name")
-
 # Display events
 st.write("## 📌 Your Schedule")
 if st.session_state.events:
@@ -32,3 +41,5 @@ else:
 if st.button("Clear All Events"):
     st.session_state.events = []
     st.success("All events cleared!")
+time = st.time_input("Select Time")
+category = st.selectbox("Event Type", ["Class", "Exam", "Assignment"])
